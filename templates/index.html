@@ -192,7 +192,51 @@
         0 0 40px rgba(0, 245, 255, .18),
         0 0 80px rgba(182, 107, 255, .12);
       backdrop-filter: blur(10px);
-      animation: fadeInLeft 0.8s ease;
+      transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .testPanel.hidden {
+      transform: translateY(-50%) translateX(-320px);
+    }
+
+    /* Panel Toggle Button */
+    .panelToggle {
+      position: absolute;
+      right: -40px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 36px;
+      height: 80px;
+      background: linear-gradient(135deg, rgba(0, 245, 255, .15), rgba(182, 107, 255, .12));
+      border: 2px solid rgba(0, 245, 255, .50);
+      border-left: none;
+      border-radius: 0 12px 12px 0;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s;
+      box-shadow:
+        0 0 25px rgba(0, 245, 255, .30),
+        0 0 0 1px rgba(0, 245, 255, .20) inset;
+    }
+
+    .panelToggle:hover {
+      background: linear-gradient(135deg, rgba(0, 245, 255, .25), rgba(182, 107, 255, .20));
+      box-shadow:
+        0 0 40px rgba(0, 245, 255, .45),
+        0 0 0 1px rgba(0, 245, 255, .30) inset;
+    }
+
+    .panelToggle .arrow {
+      font-size: 18px;
+      color: var(--cyan);
+      text-shadow: 0 0 10px rgba(0, 245, 255, .5);
+      transition: transform 0.3s;
+    }
+
+    .testPanel.hidden .panelToggle .arrow {
+      transform: rotate(180deg);
     }
 
     @keyframes fadeInLeft {
@@ -842,14 +886,19 @@
     <div class="projectTitle">👻 PHANTOM SCANNER</div>
     <div class="projectSub">Advanced Security Reconnaissance Platform</div>
     <div class="students">
-      <span class="studentBadge">�️ مصطفى تحسين علي</span>
-      <span class="studentBadge">�️ هدى صالح عبادي</span>
-      <span class="studentBadge">�️ احمد فؤاد الدلفي</span>
+      <span class="studentBadge">&#x1F6E1;&#xFE0F; مصطفى تحسين علي</span>
+      <span class="studentBadge">&#x1F6E1;&#xFE0F; هدى صالح عبادي</span>
+      <span class="studentBadge">&#x1F6E1;&#xFE0F; احمد فؤاد الدلفي</span>
     </div>
   </div>
 
   <!-- Test Sites Panel -->
-  <div class="testPanel">
+  <div class="testPanel" id="testPanel">
+    <!-- Toggle Button -->
+    <button class="panelToggle" id="panelToggle" onclick="togglePanel()">
+      <span class="arrow">◀</span>
+    </button>
+
     <div class="panelHeader">⚠️ LEGAL NOTICE</div>
     <div class="warningText">
       <div style="margin-bottom: 8px;">
@@ -1008,6 +1057,12 @@
       document.getElementById('target').value = url;
       // Scroll to scanner
       document.querySelector('.hud').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    // Panel Toggle
+    function togglePanel() {
+      const panel = document.getElementById('testPanel');
+      panel.classList.toggle('hidden');
     }
 
     // Main Scanner Logic
