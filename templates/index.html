@@ -1,356 +1,600 @@
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Cyber HUD Scanner UI</title>
   <style>
-    :root{
-      --bg0:#04070c;
-      --bg1:#07111a;
+    :root {
+      --bg0: #04070c;
+      --bg1: #07111a;
       --panel: rgba(10, 20, 28, .72);
-      --line: rgba(0,245,255,.28);
-      --grid: rgba(0,245,255,.10);
+      --line: rgba(0, 245, 255, .28);
+      --grid: rgba(0, 245, 255, .10);
 
-      --cyan:#00f5ff;
-      --green:#00ff87;
-      --purple:#b66bff;
-      --yellow:#ffd84d;
-      --red:#ff4d6d;
+      --cyan: #00f5ff;
+      --green: #00ff87;
+      --purple: #b66bff;
+      --yellow: #ffd84d;
+      --red: #ff4d6d;
 
-      --text:#d8f3ff;
-      --muted:#86b8c9;
+      --text: #d8f3ff;
+      --muted: #86b8c9;
     }
 
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0;
+    * {
+      box-sizing: border-box
+    }
+
+    html,
+    body {
+      height: 100%
+    }
+
+    body {
+      margin: 0;
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-      color:var(--text);
+      color: var(--text);
       background:
-        radial-gradient(1200px 600px at 60% 30%, rgba(0,245,255,.12), transparent 55%),
-        radial-gradient(900px 550px at 20% 70%, rgba(182,107,255,.10), transparent 60%),
+        radial-gradient(1200px 600px at 60% 30%, rgba(0, 245, 255, .12), transparent 55%),
+        radial-gradient(900px 550px at 20% 70%, rgba(182, 107, 255, .10), transparent 60%),
         linear-gradient(180deg, var(--bg0), var(--bg1));
-      overflow:hidden;
+      overflow-y: auto;
+      /* Enable vertical scrolling */
+      overflow-x: hidden;
+    }
+
+    /* Custom Scrollbar Styling */
+    body::-webkit-scrollbar {
+      width: 12px;
+    }
+
+    body::-webkit-scrollbar-track {
+      background: rgba(4, 10, 14, .85);
+      border-left: 1px solid rgba(0, 245, 255, .15);
+    }
+
+    body::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, rgba(0, 245, 255, .35), rgba(0, 245, 255, .25));
+      border-radius: 6px;
+      border: 1px solid rgba(0, 245, 255, .40);
+      box-shadow:
+        0 0 0 1px rgba(0, 245, 255, .10) inset,
+        0 0 20px rgba(0, 245, 255, .15);
+    }
+
+    body::-webkit-scrollbar-thumb:hover {
+      background: linear-gradient(180deg, rgba(0, 245, 255, .45), rgba(0, 245, 255, .35));
+      box-shadow:
+        0 0 0 1px rgba(0, 245, 255, .15) inset,
+        0 0 30px rgba(0, 245, 255, .25);
+    }
+
+    /* Firefox Scrollbar */
+    body {
+      scrollbar-width: thin;
+      scrollbar-color: rgba(0, 245, 255, .35) rgba(4, 10, 14, .85);
+    }
+
+    /* Cursor Light Effect */
+    #cursorLight {
+      position: fixed;
+      width: 600px;
+      height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(circle at center,
+          rgba(0, 245, 255, .18) 0%,
+          rgba(182, 107, 255, .12) 30%,
+          transparent 70%);
+      pointer-events: none;
+      transform: translate(-50%, -50%);
+      transition: opacity 0.3s ease;
+      opacity: 0;
+      z-index: 0;
+      mix-blend-mode: screen;
+      filter: blur(40px);
+    }
+
+    body:hover #cursorLight {
+      opacity: 1;
     }
 
     /* subtle scanline */
-    body::before{
-      content:"";
-      position:fixed; inset:0;
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
       background:
-        repeating-linear-gradient(
-          to bottom,
-          rgba(255,255,255,.02) 0px,
-          rgba(255,255,255,.02) 1px,
+        repeating-linear-gradient(to bottom,
+          rgba(255, 255, 255, .02) 0px,
+          rgba(255, 255, 255, .02) 1px,
           transparent 2px,
-          transparent 5px
-        );
-      mix-blend-mode:overlay;
-      pointer-events:none;
-      opacity:.25;
+          transparent 5px);
+      mix-blend-mode: overlay;
+      pointer-events: none;
+      opacity: .25;
     }
 
     /* faint matrix dots */
-    body::after{
-      content:"";
-      position:fixed; inset:-40px;
+    body::after {
+      content: "";
+      position: fixed;
+      inset: -40px;
       background:
-        radial-gradient(circle at 10px 10px, rgba(0,245,255,.13) 1px, transparent 2px) 0 0/26px 26px;
-      opacity:.12;
+        radial-gradient(circle at 10px 10px, rgba(0, 245, 255, .13) 1px, transparent 2px) 0 0/26px 26px;
+      opacity: .12;
       filter: blur(.2px);
-      pointer-events:none;
+      pointer-events: none;
     }
 
-    .frame{
-      height:100%;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:28px;
+    .frame {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 28px;
     }
 
-    .hud{
-      width:min(1100px, 96vw);
-      border-radius:18px;
-      position:relative;
-      background: linear-gradient(180deg, rgba(6,12,18,.70), rgba(4,10,14,.62));
-      border:1px solid rgba(0,245,255,.20);
+    .hud {
+      width: min(1100px, 96vw);
+      border-radius: 18px;
+      position: relative;
+      background: linear-gradient(180deg, rgba(6, 12, 18, .70), rgba(4, 10, 14, .62));
+      border: 1px solid rgba(0, 245, 255, .20);
       box-shadow:
-        0 0 0 1px rgba(0,245,255,.10) inset,
-        0 0 70px rgba(0,245,255,.10),
-        0 0 120px rgba(182,107,255,.06);
-      overflow:hidden;
+        0 0 0 1px rgba(0, 245, 255, .10) inset,
+        0 0 70px rgba(0, 245, 255, .10),
+        0 0 120px rgba(182, 107, 255, .06);
+      overflow: hidden;
     }
 
     /* glowing border corners */
-    .hud::before{
-      content:"";
-      position:absolute; inset:0;
+    .hud::before {
+      content: "";
+      position: absolute;
+      inset: 0;
       background:
-        linear-gradient(90deg, rgba(0,245,255,.0), rgba(0,245,255,.24), rgba(0,245,255,.0)) 0 0/100% 2px no-repeat,
-        linear-gradient(90deg, rgba(0,245,255,.0), rgba(0,245,255,.18), rgba(0,245,255,.0)) 0 60px/100% 1px no-repeat,
-        radial-gradient(400px 180px at 75% 20%, rgba(0,245,255,.18), transparent 65%);
-      pointer-events:none;
-      opacity:.9;
+        linear-gradient(90deg, rgba(0, 245, 255, .0), rgba(0, 245, 255, .24), rgba(0, 245, 255, .0)) 0 0/100% 2px no-repeat,
+        linear-gradient(90deg, rgba(0, 245, 255, .0), rgba(0, 245, 255, .18), rgba(0, 245, 255, .0)) 0 60px/100% 1px no-repeat,
+        radial-gradient(400px 180px at 75% 20%, rgba(0, 245, 255, .18), transparent 65%);
+      pointer-events: none;
+      opacity: .9;
     }
 
-    .inner{
-      padding:26px;
-      position:relative;
-      z-index:1;
+    .inner {
+      padding: 26px;
+      position: relative;
+      z-index: 1;
     }
 
     /* TOP ROW */
-    .topRow{
-      display:grid;
+    .topRow {
+      display: grid;
       grid-template-columns: 1fr 220px;
-      gap:18px;
-      align-items:center;
-      padding:18px 18px;
-      border-radius:14px;
-      background: rgba(8,16,22,.58);
-      border:1px solid rgba(0,245,255,.22);
-      box-shadow: 0 0 0 1px rgba(0,245,255,.08) inset;
+      gap: 18px;
+      align-items: center;
+      padding: 18px 18px;
+      border-radius: 14px;
+      background: rgba(8, 16, 22, .58);
+      border: 1px solid rgba(0, 245, 255, .22);
+      box-shadow: 0 0 0 1px rgba(0, 245, 255, .08) inset;
     }
 
-    .urlBox{
-      display:flex;
-      align-items:center;
-      gap:12px;
-      padding:12px 14px;
-      border-radius:12px;
-      border:1px solid rgba(0,245,255,.22);
-      background: rgba(3,8,12,.52);
-      position:relative;
-      overflow:hidden;
+    .urlBox {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(0, 245, 255, .22);
+      background: rgba(3, 8, 12, .52);
+      position: relative;
+      overflow: hidden;
     }
 
-    .urlBox::after{
-      content:"";
-      position:absolute; inset:0;
-      background: linear-gradient(90deg, transparent, rgba(0,245,255,.10), transparent);
+    .urlBox::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(0, 245, 255, .10), transparent);
       transform: translateX(-60%);
       animation: sweep 3.4s linear infinite;
-      pointer-events:none;
-      opacity:.8;
+      pointer-events: none;
+      opacity: .8;
     }
 
-    @keyframes sweep{
-      0%{transform:translateX(-70%)}
-      100%{transform:translateX(70%)}
+    @keyframes sweep {
+      0% {
+        transform: translateX(-70%)
+      }
+
+      100% {
+        transform: translateX(70%)
+      }
     }
 
-    .label{
-      color:var(--cyan);
-      font-weight:700;
-      letter-spacing:.6px;
-      white-space:nowrap;
-      display:flex; align-items:center; gap:10px;
-      text-transform:uppercase;
-    }
-
-    .globe{
-      width:18px; height:18px;
-      border:1px solid rgba(0,245,255,.65);
-      border-radius:50%;
-      box-shadow: 0 0 16px rgba(0,245,255,.35);
-      position:relative;
-    }
-    .globe::before,.globe::after{
-      content:"";
-      position:absolute; inset:3px;
-      border:1px solid rgba(0,245,255,.35);
-      border-radius:50%;
-    }
-    .globe::after{ inset:7px; opacity:.7 }
-
-    .urlInput{
-      flex:1;
-      background: transparent;
-      border:0;
-      outline:0;
-      color:var(--text);
-      font-size:15px;
-      padding:6px 8px;
-      min-width:240px;
-    }
-    .urlInput::placeholder{color: rgba(215,243,255,.45)}
-
-    .execute{
-      height:52px;
-      border-radius:12px;
-      border:1px solid rgba(0,245,255,.55);
-      background: rgba(0,245,255,.10);
+    .label {
       color: var(--cyan);
-      font-weight:800;
-      letter-spacing:.8px;
-      text-transform:uppercase;
-      cursor:pointer;
-      position:relative;
-      overflow:hidden;
-      box-shadow:
-        0 0 0 1px rgba(0,245,255,.18) inset,
-        0 0 24px rgba(0,245,255,.18);
+      font-weight: 700;
+      letter-spacing: .6px;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-transform: uppercase;
     }
-    .execute::before{
-      content:"";
-      position:absolute; inset:-2px;
-      background: radial-gradient(200px 60px at 50% 0%, rgba(0,245,255,.25), transparent 70%);
-      pointer-events:none;
+
+    .globe {
+      width: 18px;
+      height: 18px;
+      border: 1px solid rgba(0, 245, 255, .65);
+      border-radius: 50%;
+      box-shadow: 0 0 16px rgba(0, 245, 255, .35);
+      position: relative;
     }
-    .execute:hover{
-      background: rgba(0,245,255,.14);
+
+    .globe::before,
+    .globe::after {
+      content: "";
+      position: absolute;
+      inset: 3px;
+      border: 1px solid rgba(0, 245, 255, .35);
+      border-radius: 50%;
+    }
+
+    .globe::after {
+      inset: 7px;
+      opacity: .7
+    }
+
+    .urlInput {
+      flex: 1;
+      background: transparent;
+      border: 0;
+      outline: 0;
+      color: var(--text);
+      font-size: 15px;
+      padding: 6px 8px;
+      min-width: 240px;
+    }
+
+    .urlInput::placeholder {
+      color: rgba(215, 243, 255, .45)
+    }
+
+    .execute {
+      height: 52px;
+      border-radius: 12px;
+      border: 1px solid rgba(0, 245, 255, .55);
+      background: rgba(0, 245, 255, .10);
+      color: var(--cyan);
+      font-weight: 800;
+      letter-spacing: .8px;
+      text-transform: uppercase;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
       box-shadow:
-        0 0 0 1px rgba(0,245,255,.22) inset,
-        0 0 40px rgba(0,245,255,.25);
+        0 0 0 1px rgba(0, 245, 255, .18) inset,
+        0 0 24px rgba(0, 245, 255, .18);
+    }
+
+    .execute::before {
+      content: "";
+      position: absolute;
+      inset: -2px;
+      background: radial-gradient(200px 60px at 50% 0%, rgba(0, 245, 255, .25), transparent 70%);
+      pointer-events: none;
+    }
+
+    .execute:hover {
+      background: rgba(0, 245, 255, .14);
+      box-shadow:
+        0 0 0 1px rgba(0, 245, 255, .22) inset,
+        0 0 40px rgba(0, 245, 255, .25);
       transform: translateY(-1px);
     }
-    .execute:active{transform: translateY(0px) scale(.99)}
-    .execute:disabled{
+
+    .execute:active {
+      transform: translateY(0px) scale(.99)
+    }
+
+    .execute:disabled {
       opacity: 0.5;
       cursor: not-allowed;
     }
 
     /* BUTTON GRID */
-    .grid{
-      margin-top:18px;
-      display:grid;
+    .grid {
+      margin-top: 18px;
+      display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap:14px;
+      gap: 14px;
     }
 
-    .neo{
-      height:62px;
-      border-radius:12px;
-      background: rgba(6,12,18,.55);
-      border:1px solid rgba(0,245,255,.18);
-      position:relative;
-      cursor:pointer;
-      display:flex;
-      align-items:center;
-      justify-content:flex-start;
-      gap:12px;
-      padding:0 16px;
-      color:var(--text);
-      letter-spacing:.4px;
-      text-transform:uppercase;
-      font-weight:800;
-      box-shadow: 0 0 0 1px rgba(255,255,255,.04) inset;
-      overflow:hidden;
+    .neo {
+      height: 62px;
+      border-radius: 12px;
+      background: rgba(6, 12, 18, .55);
+      border: 1px solid rgba(0, 245, 255, .18);
+      position: relative;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 12px;
+      padding: 0 16px;
+      color: var(--text);
+      letter-spacing: .4px;
+      text-transform: uppercase;
+      font-weight: 800;
+      box-shadow: 0 0 0 1px rgba(255, 255, 255, .04) inset;
+      overflow: hidden;
     }
 
-    .neo::before{
-      content:"";
-      position:absolute; inset:-2px;
-      opacity:.9;
-      pointer-events:none;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,.06), transparent);
+    .neo::before {
+      content: "";
+      position: absolute;
+      inset: -2px;
+      opacity: .9;
+      pointer-events: none;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .06), transparent);
       transform: translateX(-70%);
       animation: sweep2 4.6s linear infinite;
     }
-    @keyframes sweep2{
-      0%{transform:translateX(-80%)}
-      100%{transform:translateX(80%)}
+
+    @keyframes sweep2 {
+      0% {
+        transform: translateX(-80%)
+      }
+
+      100% {
+        transform: translateX(80%)
+      }
     }
 
-    .neo:hover{filter: brightness(1.05)}
-    .neo:active{transform: scale(.995)}
-    .neo:disabled{opacity: 0.4; cursor: not-allowed}
+    .neo:hover {
+      filter: brightness(1.05)
+    }
 
-    .neo .icon{
-      width:28px; height:28px;
-      display:grid; place-items:center;
-      border-radius:8px;
-      background: rgba(255,255,255,.03);
-      border:1px solid rgba(255,255,255,.06);
+    .neo:active {
+      transform: scale(.995)
+    }
+
+    .neo:disabled {
+      opacity: 0.4;
+      cursor: not-allowed
+    }
+
+    .neo .icon {
+      width: 28px;
+      height: 28px;
+      display: grid;
+      place-items: center;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, .03);
+      border: 1px solid rgba(255, 255, 255, .06);
     }
 
     /* per-button accent */
-    .a-red{ border-color: rgba(255,77,109,.45); box-shadow: 0 0 22px rgba(255,77,109,.14);}
-    .a-red .icon{ box-shadow: 0 0 18px rgba(255,77,109,.22); }
-    .a-red .title{ color: rgba(255,210,220,.95) }
-    .a-red::after{ content:""; position:absolute; inset:0; border-radius:12px; box-shadow: 0 0 0 1px rgba(255,77,109,.20) inset, 0 0 26px rgba(255,77,109,.10); pointer-events:none; }
+    .a-red {
+      border-color: rgba(255, 77, 109, .45);
+      box-shadow: 0 0 22px rgba(255, 77, 109, .14);
+    }
 
-    .a-green{ border-color: rgba(0,255,135,.45); box-shadow: 0 0 22px rgba(0,255,135,.12);}
-    .a-green::after{ content:""; position:absolute; inset:0; border-radius:12px; box-shadow: 0 0 0 1px rgba(0,255,135,.18) inset, 0 0 26px rgba(0,255,135,.10); pointer-events:none; }
+    .a-red .icon {
+      box-shadow: 0 0 18px rgba(255, 77, 109, .22);
+    }
 
-    .a-cyan{ border-color: rgba(0,245,255,.45); box-shadow: 0 0 22px rgba(0,245,255,.12);}
-    .a-cyan::after{ content:""; position:absolute; inset:0; border-radius:12px; box-shadow: 0 0 0 1px rgba(0,245,255,.16) inset, 0 0 26px rgba(0,245,255,.10); pointer-events:none; }
+    .a-red .title {
+      color: rgba(255, 210, 220, .95)
+    }
 
-    .a-purple{ border-color: rgba(182,107,255,.55); box-shadow: 0 0 22px rgba(182,107,255,.12);}
-    .a-purple::after{ content:""; position:absolute; inset:0; border-radius:12px; box-shadow: 0 0 0 1px rgba(182,107,255,.18) inset, 0 0 26px rgba(182,107,255,.10); pointer-events:none; }
+    .a-red::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 12px;
+      box-shadow: 0 0 0 1px rgba(255, 77, 109, .20) inset, 0 0 26px rgba(255, 77, 109, .10);
+      pointer-events: none;
+    }
 
-    .a-yellow{ border-color: rgba(255,216,77,.55); box-shadow: 0 0 22px rgba(255,216,77,.10);}
-    .a-yellow::after{ content:""; position:absolute; inset:0; border-radius:12px; box-shadow: 0 0 0 1px rgba(255,216,77,.16) inset, 0 0 26px rgba(255,216,77,.08); pointer-events:none; }
+    .a-green {
+      border-color: rgba(0, 255, 135, .45);
+      box-shadow: 0 0 22px rgba(0, 255, 135, .12);
+    }
 
-    .title{ font-size:15px }
-    .sub{ font-size:12px; color:var(--muted); font-weight:700; letter-spacing:.3px }
+    .a-green::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 12px;
+      box-shadow: 0 0 0 1px rgba(0, 255, 135, .18) inset, 0 0 26px rgba(0, 255, 135, .10);
+      pointer-events: none;
+    }
+
+    .a-cyan {
+      border-color: rgba(0, 245, 255, .45);
+      box-shadow: 0 0 22px rgba(0, 245, 255, .12);
+    }
+
+    .a-cyan::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 12px;
+      box-shadow: 0 0 0 1px rgba(0, 245, 255, .16) inset, 0 0 26px rgba(0, 245, 255, .10);
+      pointer-events: none;
+    }
+
+    .a-purple {
+      border-color: rgba(182, 107, 255, .55);
+      box-shadow: 0 0 22px rgba(182, 107, 255, .12);
+    }
+
+    .a-purple::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 12px;
+      box-shadow: 0 0 0 1px rgba(182, 107, 255, .18) inset, 0 0 26px rgba(182, 107, 255, .10);
+      pointer-events: none;
+    }
+
+    .a-yellow {
+      border-color: rgba(255, 216, 77, .55);
+      box-shadow: 0 0 22px rgba(255, 216, 77, .10);
+    }
+
+    .a-yellow::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 12px;
+      box-shadow: 0 0 0 1px rgba(255, 216, 77, .16) inset, 0 0 26px rgba(255, 216, 77, .08);
+      pointer-events: none;
+    }
+
+    .title {
+      font-size: 15px
+    }
+
+    .sub {
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 700;
+      letter-spacing: .3px
+    }
 
     /* LOG PANEL */
-    .logPanel{
-      margin-top:18px;
-      border-radius:14px;
-      background: rgba(3,8,12,.58);
-      border:1px solid rgba(0,245,255,.18);
-      box-shadow: 0 0 0 1px rgba(0,245,255,.08) inset;
-      overflow:hidden;
+    .logPanel {
+      margin-top: 18px;
+      border-radius: 14px;
+      background: rgba(3, 8, 12, .58);
+      border: 1px solid rgba(0, 245, 255, .18);
+      box-shadow: 0 0 0 1px rgba(0, 245, 255, .08) inset;
+      overflow: hidden;
     }
 
-    .logHeader{
-      padding:12px 14px;
-      display:flex; align-items:center; justify-content:space-between;
-      border-bottom:1px solid rgba(0,245,255,.12);
-      background: rgba(8,16,22,.45);
+    .logHeader {
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(0, 245, 255, .12);
+      background: rgba(8, 16, 22, .45);
     }
 
-    .logHeader .left{
-      display:flex; align-items:center; gap:10px;
-      color:var(--cyan);
-      font-weight:800;
-      letter-spacing:.6px;
-      text-transform:uppercase;
+    .logHeader .left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--cyan);
+      font-weight: 800;
+      letter-spacing: .6px;
+      text-transform: uppercase;
     }
 
-    .pill{
-      padding:6px 10px;
-      border-radius:999px;
-      border:1px solid rgba(0,245,255,.22);
-      color: rgba(0,245,255,.92);
-      background: rgba(0,245,255,.06);
-      font-weight:800;
-      font-size:12px;
+    .pill {
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(0, 245, 255, .22);
+      color: rgba(0, 245, 255, .92);
+      background: rgba(0, 245, 255, .06);
+      font-weight: 800;
+      font-size: 12px;
     }
 
-    .console{
-      padding:14px;
-      height:240px;
-      overflow:auto;
-      line-height:1.65;
-      font-size:14px;
-      color: rgba(210,245,255,.92);
+    .console {
+      padding: 14px;
+      height: 240px;
+      overflow: auto;
+      line-height: 1.65;
+      font-size: 14px;
+      color: rgba(210, 245, 255, .92);
     }
 
-    .line{display:flex; gap:10px; white-space:pre-wrap}
-    .ts{color: rgba(0,245,255,.60)}
-    .ok{color: var(--cyan); font-weight:900}
-    .low{color: var(--green); font-weight:900}
-    .med{color: var(--yellow); font-weight:900}
-    .crit{color: var(--red); font-weight:900}
-    .hint{color: rgba(255,216,77,.92); font-weight:900}
+    /* Console Scrollbar */
+    .console::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .console::-webkit-scrollbar-track {
+      background: rgba(3, 8, 12, .70);
+      border-radius: 4px;
+    }
+
+    .console::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, rgba(0, 245, 255, .30), rgba(0, 245, 255, .20));
+      border-radius: 4px;
+      border: 1px solid rgba(0, 245, 255, .35);
+    }
+
+    .console::-webkit-scrollbar-thumb:hover {
+      background: linear-gradient(180deg, rgba(0, 245, 255, .40), rgba(0, 245, 255, .30));
+    }
+
+    .line {
+      display: flex;
+      gap: 10px;
+      white-space: pre-wrap
+    }
+
+    .ts {
+      color: rgba(0, 245, 255, .60)
+    }
+
+    .ok {
+      color: var(--cyan);
+      font-weight: 900
+    }
+
+    .low {
+      color: var(--green);
+      font-weight: 900
+    }
+
+    .med {
+      color: var(--yellow);
+      font-weight: 900
+    }
+
+    .crit {
+      color: var(--red);
+      font-weight: 900
+    }
+
+    .hint {
+      color: rgba(255, 216, 77, .92);
+      font-weight: 900
+    }
 
     /* responsive */
-    @media (max-width: 980px){
-      .topRow{grid-template-columns: 1fr}
-      .execute{width:100%}
-      .grid{grid-template-columns: 1fr}
-      .console{height:260px}
+    @media (max-width: 980px) {
+      .topRow {
+        grid-template-columns: 1fr
+      }
+
+      .execute {
+        width: 100%
+      }
+
+      .grid {
+        grid-template-columns: 1fr
+      }
+
+      .console {
+        height: 260px
+      }
     }
   </style>
 </head>
 
 <body>
+  <!-- Cursor Light Effect -->
+  <div id="cursorLight"></div>
+
   <div class="frame">
     <div class="hud">
       <div class="inner">
@@ -453,24 +697,50 @@
   </div>
 
   <script>
-    const $ = (s)=>document.querySelector(s);
-    const $$ = (s)=>document.querySelectorAll(s);
+    // Cursor Light Effect
+    const cursorLight = document.getElementById('cursorLight');
+    let mouseX = 0;
+    let mouseY = 0;
+    let lightX = 0;
+    let lightY = 0;
+
+    document.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+    });
+
+    function animateCursorLight() {
+      // Smooth interpolation for laggy effect
+      lightX += (mouseX - lightX) * 0.15;
+      lightY += (mouseY - lightY) * 0.15;
+
+      cursorLight.style.left = lightX + 'px';
+      cursorLight.style.top = lightY + 'px';
+
+      requestAnimationFrame(animateCursorLight);
+    }
+
+    animateCursorLight();
+
+    // Main Scanner Logic
+    const $ = (s) => document.querySelector(s);
+    const $$ = (s) => document.querySelectorAll(s);
     const consoleEl = $("#console");
     const stateEl = $("#state");
     const executeBtn = $("#execute");
     const targetInput = $("#target");
-    
+
     let currentResult = null;
 
-    function ts(){
+    function ts() {
       const d = new Date();
-      const hh = String(d.getHours()).padStart(2,"0");
-      const mm = String(d.getMinutes()).padStart(2,"0");
-      const ss = String(d.getSeconds()).padStart(2,"0");
+      const hh = String(d.getHours()).padStart(2, "0");
+      const mm = String(d.getMinutes()).padStart(2, "0");
+      const ss = String(d.getSeconds()).padStart(2, "0");
       return `[${hh}:${mm}:${ss}]`;
     }
 
-    function addLine(text, cls=""){
+    function addLine(text, cls = "") {
       const div = document.createElement("div");
       div.className = "line";
       const escapedText = text.replace(/</g, "&lt;").replace(/>/g, "&gt;");
@@ -479,13 +749,13 @@
       consoleEl.scrollTop = consoleEl.scrollHeight;
     }
 
-    function enableButtons(enable){
+    function enableButtons(enable) {
       $$(".neo").forEach(btn => btn.disabled = !enable);
     }
 
-    async function runScan(){
+    async function runScan() {
       const url = targetInput.value.trim();
-      if(!url || (!url.startsWith('http://') && !url.startsWith('https://'))){
+      if (!url || (!url.startsWith('http://') && !url.startsWith('https://'))) {
         addLine("ERROR: Please enter a valid URL (http:// or https://)", "crit");
         return;
       }
@@ -494,44 +764,44 @@
       stateEl.textContent = "SCANNING";
       executeBtn.disabled = true;
       enableButtons(false);
-      
+
       addLine(`SCANNING: ${url}`, "ok");
       addLine("Please wait, this may take a few moments...", "hint");
 
       try {
         const response = await fetch('/api/scan', {
           method: 'POST',
-          headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({url: url})
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url: url })
         });
 
         const data = await response.json();
-        
-        if(data.error){
+
+        if (data.error) {
           addLine(`ERROR: ${data.error}`, "crit");
           stateEl.textContent = "ERROR";
         } else {
           currentResult = data;
           addLine("SCAN COMPLETE", "ok");
           addLine(`Title: ${data.http.metadata.title || 'N/A'}`, "");
-          
+
           // Show vulnerabilities
           data.vulns.forEach(v => {
-            if(v.includes('CRITICAL')){
+            if (v.includes('CRITICAL')) {
               addLine(v, "crit");
-            } else if(v.includes('HIGH') || v.includes('MEDIUM')){
+            } else if (v.includes('HIGH') || v.includes('MEDIUM')) {
               addLine(v, "med");
-            } else if(v.includes('LOW')){
+            } else if (v.includes('LOW')) {
               addLine(v, "low");
             } else {
               addLine(v, "");
             }
           });
-          
+
           stateEl.textContent = "DONE";
           enableButtons(true);
         }
-      } catch(err) {
+      } catch (err) {
         addLine(`NETWORK ERROR: ${err.message}`, "crit");
         stateEl.textContent = "ERROR";
       } finally {
@@ -539,65 +809,99 @@
       }
     }
 
-    function showPanel(action){
-      if(!currentResult){
+    function showPanel(action) {
+      if (!currentResult) {
         addLine("No scan results available. Run a scan first.", "hint");
         return;
       }
 
       consoleEl.innerHTML = "";
-      
-      switch(action){
+
+      switch (action) {
         case 'msf':
           addLine("=== METASPLOIT REPORT ===", "ok");
           currentResult.msf_report.split('\n').forEach(line => addLine(line, ""));
           break;
-          
+
         case 'audit':
           addLine("=== AUDIT COMMANDS ===", "ok");
           currentResult.audit_cmds.forEach(cmd => addLine(cmd, "hint"));
           break;
-          
+
         case 'diff':
           addLine("=== CONTENT DIFF ===", "ok");
           currentResult.diff_data.forEach(line => addLine(line, ""));
           break;
-          
+
         case 'nmap':
           addLine("=== NMAP PORT SCAN ===", "ok");
-          if(currentResult.ports.length > 0){
+          if (currentResult.ports.length > 0) {
             currentResult.ports.forEach(port => addLine(port, ""));
           } else {
             addLine("No open ports detected", "low");
           }
+
+          // NEW: Display Data Leaks
+          addLine("", "");
+          addLine("=== DATA BREACH DETECTION ===", "crit");
+          const leaks = currentResult.data_leaks;
+
+          if (leaks.exposed_files.length > 0) {
+            addLine("", "");
+            addLine("🔴 EXPOSED FILES:", "crit");
+            leaks.exposed_files.forEach(file => addLine(`  ${file}`, "crit"));
+          }
+
+          if (leaks.leaked_emails.length > 0) {
+            addLine("", "");
+            addLine("📧 LEAKED EMAILS:", "med");
+            leaks.leaked_emails.forEach(email => addLine(`  ${email}`, "med"));
+          }
+
+          if (leaks.api_keys_found.length > 0) {
+            addLine("", "");
+            addLine("🔑 API KEYS / TOKENS DETECTED:", "crit");
+            leaks.api_keys_found.forEach(key => addLine(`  ${key}`, "crit"));
+          }
+
+          if (leaks.sensitive_patterns.length > 0) {
+            addLine("", "");
+            addLine("⚠️  SENSITIVE PATTERNS:", "med");
+            leaks.sensitive_patterns.forEach(pattern => addLine(`  ${pattern}`, "med"));
+          }
+
+          if (leaks.exposed_files.length === 0 && leaks.leaked_emails.length === 0 &&
+            leaks.api_keys_found.length === 0 && leaks.sensitive_patterns.length === 0) {
+            addLine("✅ No critical data leaks detected", "ok");
+          }
           break;
-          
+
         case 'subs':
           addLine("=== SUBDOMAIN SCAN ===", "ok");
-          if(currentResult.subdomains.length > 0){
+          if (currentResult.subdomains.length > 0) {
             currentResult.subdomains.forEach(sub => addLine(sub, ""));
           } else {
             addLine("No subdomains discovered", "low");
           }
           break;
-          
+
         case 'brute':
           addLine("=== SCANNER COMMANDS ===", "ok");
           currentResult.audit_cmds.forEach(cmd => addLine(cmd, "hint"));
           break;
-          
+
         case 'intel':
           addLine("=== SITE INTELLIGENCE ===", "ok");
           const m = currentResult.http.metadata;
           addLine(`Title: ${m.title || 'N/A'}`, "");
           addLine(`Description: ${m.description || 'N/A'}`, "");
-          if(m.emails && m.emails.length > 0){
+          if (m.emails && m.emails.length > 0) {
             addLine(`Emails: ${m.emails.join(', ')}`, "");
           }
           addLine(`Security Score: ${currentResult.security.score}/100`, "");
           addLine(`WAF: ${currentResult.waf.join(', ')}`, "");
           break;
-          
+
         case 'http':
           addLine("=== HTTP DATA ===", "ok");
           const h = currentResult.http;
@@ -606,11 +910,11 @@
           addLine(`Total Links: ${h.links.total} (Int: ${h.links.internal}, Ext: ${h.links.external})`, "");
           addLine("", "");
           addLine("Headers:", "hint");
-          Object.entries(h.headers).forEach(([k,v]) => {
+          Object.entries(h.headers).forEach(([k, v]) => {
             addLine(`${k}: ${v}`, "");
           });
           break;
-          
+
         case 'save':
           downloadReport();
           addLine("Report downloaded!", "ok");
@@ -618,8 +922,8 @@
       }
     }
 
-    function downloadReport(){
-      const blob = new Blob([JSON.stringify(currentResult, null, 2)], {type: 'application/json'});
+    function downloadReport() {
+      const blob = new Blob([JSON.stringify(currentResult, null, 2)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
@@ -630,8 +934,8 @@
 
     $("#execute").addEventListener("click", runScan);
 
-    $$(".neo").forEach(btn=>{
-      btn.addEventListener("click", ()=>{
+    $$(".neo").forEach(btn => {
+      btn.addEventListener("click", () => {
         const action = btn.dataset.action;
         showPanel(action);
       });
@@ -640,4 +944,5 @@
     addLine("System ready. Enter target URL and click EXECUTE SCAN.", "ok");
   </script>
 </body>
+
 </html>

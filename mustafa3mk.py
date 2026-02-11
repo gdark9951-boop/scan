@@ -218,6 +218,73 @@ def extract_links(html):
             internal += 1
     return {"internal": internal, "external": external, "total": len(links)}
 
+def detect_data_leaks(base_url, html_content=""):
+    """Detect exposed files, leaked emails, API keys, and sensitive information"""
+    leaks = {
+        "exposed_files": [],
+        "leaked_emails": [],
+        "api_keys_found": [],
+        "sensitive_patterns": []
+    }
+    
+    session = get_session()
+    
+    # 1. Check for exposed sensitive files (already in SENSITIVE_PATHS)
+    for path in SENSITIVE_PATHS[:10]:  # Check top 10 only for speed
+        try:
+            url = f"{base_url.rstrip('/')}/{path}"
+            r = session.head(url, timeout=3, allow_redirects=False)
+            if r.status_code in [200, 403]:  # 200 = accessible, 403 = exists but forbidden
+                status = "CRITICAL - Accessible" if r.status_code == 200 else "WARNING - Exists (Forbidden)"
+                leaks["exposed_files"].append(f"{path} [{status}]")
+        except:
+            pass
+    
+    # 2. Extract emails from page content
+    if html_content:
+        email_pattern = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
+        emails = list(set(re.findall(email_pattern, html_content)))
+        leaks["leaked_emails"] = emails[:10]  # Limit to 10
+    
+    # 3. Detect API key patterns
+    if html_content:
+        api_patterns = {
+            "AWS Key": r'AKIA[0-9A-Z]{16}',
+            "Generic API": r'api[_-]?key["\']?\s*[:=]\s*["\']([a-zA-Z0-9_\-]{20,})',
+            "Secret Token": r'secret[_-]?token["\']?\s*[:=]\s*["\']([a-zA-Z0-9_\-]{20,})',
+            "Bearer Token": r'Bearer\s+[A-Za-z0-9\-._~+/]+=*'
+        }
+        
+        for name, pattern in api_patterns.items():
+            if re.search(pattern, html_content, re.IGNORECASE):
+                leaks["api_keys_found"].append(f"{name} pattern detected")
+    
+    # 4. Check robots.txt for leaks
+    try:
+        robots_url = f"{base_url.rstrip('/')}/robots.txt"
+        r = session.get(robots_url, timeout=3)
+        if r.status_code == 200:
+            # Extract emails from robots.txt
+            robots_emails = re.findall(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b', r.text)
+            leaks["leaked_emails"].extend(robots_emails)
+            leaks["leaked_emails"] = list(set(leaks["leaked_emails"]))[:10]
+            
+            # Check for sensitive paths in robots.txt
+            if 'admin' in r.text.lower() or 'backup' in r.text.lower():
+                leaks["sensitive_patterns"].append("Admin/Backup paths found in robots.txt")
+    except:
+        pass
+    
+    # 5. Check for directory listing
+    try:
+        r = session.get(base_url, timeout=3)
+        if 'Index of /' in r.text or 'Directory Listing' in r.text:
+            leaks["sensitive_patterns"].append("CRITICAL: Directory Listing Enabled")
+    except:
+        pass
+    
+    return leaks
+
 # ---------------- Core Probes ----------------
 
 def probe_http_and_meta(url, rounds=ROUNDS):
@@ -422,6 +489,10 @@ def analyze(url):
     http_res = f_http.result()
     if not http_res: raise Exception("Target Unreachable (Blocked or Offline)")
     
+    # Detect data leaks using HTTP content
+    html_content = http_res.get('html_snippet', '')
+    data_leaks = detect_data_leaks(url, html_content)
+    
     results = {
         "url": url,
         "timestamp": datetime.now(timezone.utc).isoformat(),
@@ -433,7 +504,8 @@ def analyze(url):
         "subdomains": f_subs.result(),
         "robots": f_robots.result(),
         "waf": detect_waf(http_res['headers']),
-        "security": security_headers_score(http_res['headers'])
+        "security": security_headers_score(http_res['headers']),
+        "data_leaks": data_leaks  # NEW: Add data leaks to results
     }
     results["vulns"] = vulnerability_advisor(results)
     results["exploit_intel"] = exploit_research(results["vulns"])
