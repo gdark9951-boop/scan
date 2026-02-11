@@ -201,10 +201,10 @@
       left: -320px;
     }
 
-    /* Panel Toggle Button */
+    /* Panel Toggle Button - now part of panel */
     .panelToggle {
-      position: fixed;
-      left: 332px;
+      position: absolute;
+      right: -38px;
       top: 50%;
       transform: translateY(-50%);
       width: 36px;
@@ -217,11 +217,11 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1), background 0.3s, box-shadow 0.3s;
+      transition: all 0.3s;
       box-shadow:
         0 0 25px rgba(0, 245, 255, .30),
         0 0 0 1px rgba(0, 245, 255, .20) inset;
-      z-index: 11;
+      z-index: 1;
     }
 
     .panelToggle:hover {
@@ -442,59 +442,56 @@
       animation: hudPulse 4s ease-in-out infinite;
     }
 
-    /* Particle Effect Overlay */
+    /* Particle Effect Overlay - Large Visible Orbs */
     .hud::before {
       content: "";
       position: absolute;
       bottom: 0;
       left: 0;
       right: 0;
-      height: 250px;
-      background-image:
-        radial-gradient(circle, rgba(0, 245, 255, .8) 0%, rgba(0, 245, 255, .4) 40%, transparent 70%),
-        radial-gradient(circle, rgba(182, 107, 255, .7) 0%, rgba(182, 107, 255, .3) 40%, transparent 70%),
-        radial-gradient(circle, rgba(0, 245, 255, .9) 0%, rgba(0, 245, 255, .5) 40%, transparent 70%),
-        radial-gradient(circle, rgba(182, 107, 255, .8) 0%, rgba(182, 107, 255, .4) 40%, transparent 70%),
-        radial-gradient(circle, rgba(0, 245, 255, .7) 0%, rgba(0, 245, 255, .3) 40%, transparent 70%),
-        radial-gradient(circle, rgba(182, 107, 255, .9) 0%, rgba(182, 107, 255, .5) 40%, transparent 70%),
-        radial-gradient(circle, rgba(0, 245, 255, .8) 0%, rgba(0, 245, 255, .4) 40%, transparent 70%),
-        radial-gradient(circle, rgba(182, 107, 255, .7) 0%, rgba(182, 107, 255, .3) 40%, transparent 70%);
-      background-size:
-        15px 15px, 12px 12px, 18px 18px, 14px 14px,
-        16px 16px, 13px 13px, 17px 17px, 15px 15px;
-      background-position:
-        20% 100%, 60% 95%, 35% 90%, 75% 98%,
-        15% 92%, 85% 88%, 45% 96%, 90% 85%;
+      height: 100%;
+      background:
+        radial-gradient(circle 25px at 15% 95%, rgba(0, 245, 255, 1) 0%, rgba(0, 245, 255, .6) 30%, transparent 100%),
+        radial-gradient(circle 20px at 85% 98%, rgba(182, 107, 255, 1) 0%, rgba(182, 107, 255, .5) 30%, transparent 100%),
+        radial-gradient(circle 30px at 45% 92%, rgba(0, 245, 255, .9) 0%, rgba(0, 245, 255, .4) 30%, transparent 100%),
+        radial-gradient(circle 22px at 70% 96%, rgba(182, 107, 255, .8) 0%, rgba(182, 107, 255, .3) 30%, transparent 100%),
+        radial-gradient(circle 28px at 25% 90%, rgba(0, 245, 255, .95) 0%, rgba(0, 245, 255, .5) 30%, transparent 100%),
+        radial-gradient(circle 24px at 60% 94%, rgba(182, 107, 255, .9) 0%, rgba(182, 107, 255, .4) 30%, transparent 100%),
+        radial-gradient(circle 26px at 35% 88%, rgba(0, 245, 255, .85) 0%, rgba(0, 245, 255, .45) 30%, transparent 100%),
+        radial-gradient(circle 21px at 90% 93%, rgba(182, 107, 255, .95) 0%, rgba(182, 107, 255, .55) 30%, transparent 100%),
+        radial-gradient(circle 23px at 50% 97%, rgba(0, 245, 255, .9) 0%, rgba(0, 245, 255, .4) 30%, transparent 100%),
+        radial-gradient(circle 27px at 10% 91%, rgba(182, 107, 255, .85) 0%, rgba(182, 107, 255, .35) 30%, transparent 100%);
       background-repeat: no-repeat;
-      opacity: 0.9;
-      animation: particlesRise 3.5s ease-in-out infinite;
+      opacity: 1;
+      animation: particlesRise 8s ease-in-out infinite;
       pointer-events: none;
-      mask-image: linear-gradient(to top, black 30%, transparent 100%);
-      -webkit-mask-image: linear-gradient(to top, black 30%, transparent 100%);
-      filter: blur(1px);
+      filter: blur(2px);
+      mix-blend-mode: screen;
     }
 
     @keyframes particlesRise {
       0% {
         background-position:
-          20% 110%, 60% 105%, 35% 100%, 75% 108%,
-          15% 102%, 85% 98%, 45% 106%, 90% 95%;
+          15% 105%, 85% 108%, 45% 102%, 70% 106%, 25% 100%,
+          60% 104%, 35% 98%, 90% 103%, 50% 107%, 10% 101%;
         opacity: 0;
+        filter: blur(2px);
       }
 
-      15% {
-        opacity: 0.9;
+      10% {
+        opacity: 1;
       }
 
-      85% {
-        opacity: 0.7;
+      90% {
+        opacity: 0.8;
       }
 
       100% {
         background-position:
-          20% -40%, 60% -45%, 35% -50%, 75% -42%,
-          15% -48%, 85% -52%, 45% -44%, 90% -55%;
+          15% -30%, 85% -35%, 45% -25%, 70% -32%, 25% -20%,
+          60% -28%, 35% -18%, 90% -33%, 50% -27%, 10% -22%;
         opacity: 0;
+        filter: blur(4px);
       }
     }
 
@@ -977,6 +974,11 @@
 
   <!-- Test Sites Panel -->
   <div class="testPanel" id="testPanel">
+    <!-- Toggle Button (part of panel) -->
+    <button class="panelToggle" id="panelToggleBtn" onclick="togglePanel()">
+      <span class="arrow" id="toggleArrow">◀</span>
+    </button>
+
     <div class="panelHeader">⚠️ LEGAL NOTICE</div>
     <div class="warningText">
       <div style="margin-bottom: 8px;">
@@ -1002,11 +1004,6 @@
       </a>
     </div>
   </div>
-
-  <!-- Toggle Button (separate from panel) -->
-  <button class="panelToggle" id="panelToggleBtn" onclick="togglePanel()">
-    <span class="arrow" id="toggleArrow">◀</span>
-  </button>
 
   <div class="frame">
     <div class="hud">
@@ -1145,16 +1142,13 @@
     // Panel Toggle
     function togglePanel() {
       const panel = document.getElementById('testPanel');
-      const toggleBtn = document.getElementById('panelToggleBtn');
       const arrow = document.getElementById('toggleArrow');
 
       panel.classList.toggle('hidden');
 
       if (panel.classList.contains('hidden')) {
-        toggleBtn.style.left = '0px';
         arrow.style.transform = 'rotate(180deg)';
       } else {
-        toggleBtn.style.left = '332px';
         arrow.style.transform = 'rotate(0deg)';
       }
     }
