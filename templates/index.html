@@ -47,16 +47,15 @@
       position: relative;
     }
 
-    /* Small Particles Covering Entire Page */
-    body::before {
-      content: "";
+    /* Particles Container - Dedicated Element */
+    #particlesContainer {
       position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
       top: 0;
+      left: 0;
       width: 100%;
       height: 100%;
+      pointer-events: none;
+      z-index: 9999;
       background:
         radial-gradient(circle 5px at 5% 95%, rgba(0, 245, 255, 1), transparent),
         radial-gradient(circle 6px at 15% 98%, rgba(182, 107, 255, 1), transparent),
@@ -87,42 +86,10 @@
         radial-gradient(circle 6px at 78% 88%, rgba(0, 245, 255, 1), transparent),
         radial-gradient(circle 5px at 88% 94%, rgba(182, 107, 255, 1), transparent),
         radial-gradient(circle 6px at 98% 91%, rgba(0, 245, 255, 1), transparent),
-        radial-gradient(circle 5px at 12% 97%, rgba(182, 107, 255, 1), transparent),
-        radial-gradient(circle 4px at 3% 89%, rgba(0, 245, 255, .9), transparent),
-        radial-gradient(circle 3px at 13% 94%, rgba(182, 107, 255, .8), transparent),
-        radial-gradient(circle 5px at 23% 91%, rgba(0, 245, 255, .85), transparent),
-        radial-gradient(circle 3px at 33% 97%, rgba(182, 107, 255, .9), transparent),
-        radial-gradient(circle 4px at 43% 89%, rgba(0, 245, 255, .8), transparent),
-        radial-gradient(circle 3px at 53% 95%, rgba(182, 107, 255, .85), transparent),
-        radial-gradient(circle 5px at 63% 88%, rgba(0, 245, 255, .9), transparent),
-        radial-gradient(circle 4px at 73% 94%, rgba(182, 107, 255, .8), transparent),
-        radial-gradient(circle 3px at 83% 90%, rgba(0, 245, 255, .85), transparent),
-        radial-gradient(circle 4px at 93% 96%, rgba(0, 245, 255, .9), transparent),
-        radial-gradient(circle 3px at 7% 92%, rgba(0, 245, 255, .8), transparent),
-        radial-gradient(circle 5px at 17% 87%, rgba(182, 107, 255, .85), transparent),
-        radial-gradient(circle 3px at 27% 95%, rgba(0, 245, 255, .9), transparent),
-        radial-gradient(circle 4px at 37% 90%, rgba(0, 245, 255, .8), transparent),
-        radial-gradient(circle 3px at 47% 93%, rgba(0, 245, 255, .85), transparent),
-        radial-gradient(circle 5px at 57% 98%, rgba(0, 245, 255, .9), transparent),
-        radial-gradient(circle 4px at 67% 85%, rgba(0, 245, 255, .8), transparent),
-        radial-gradient(circle 3px at 77% 92%, rgba(182, 107, 255, .85), transparent),
-        radial-gradient(circle 4px at 87% 96%, rgba(0, 245, 255, .9), transparent),
-        radial-gradient(circle 3px at 97% 89%, rgba(182, 107, 255, .8), transparent),
-        radial-gradient(circle 5px at 2% 94%, rgba(0, 245, 255, .85), transparent),
-        radial-gradient(circle 3px at 11% 88%, rgba(182, 107, 255, .9), transparent),
-        radial-gradient(circle 4px at 21% 98%, rgba(0, 245, 255, .8), transparent),
-        radial-gradient(circle 3px at 31% 93%, rgba(182, 107, 255, .85), transparent),
-        radial-gradient(circle 5px at 41% 86%, rgba(0, 245, 255, .9), transparent),
-        radial-gradient(circle 4px at 51% 96%, rgba(0, 245, 255, .8), transparent),
-        radial-gradient(circle 3px at 61% 91%, rgba(0, 245, 255, .85), transparent),
-        radial-gradient(circle 4px at 71% 97%, rgba(0, 245, 255, .9), transparent),
-        radial-gradient(circle 3px at 81% 87%, rgba(0, 245, 255, .8), transparent),
-        radial-gradient(circle 5px at 91% 93%, rgba(182, 107, 255, .85), transparent);
+        radial-gradient(circle 5px at 12% 97%, rgba(182, 107, 255, 1), transparent);
       background-repeat: no-repeat;
-      opacity: 0.9;
+      opacity: 0.7;
       animation: particlesRiseFull 10s ease-in-out infinite;
-      pointer-events: none;
-      z-index: 9999;
     }
 
     @keyframes particlesRiseFull {
@@ -133,22 +100,16 @@
           10% 100%, 20% 106%, 30% 98%, 40% 104%, 50% 101%,
           60% 107%, 70% 99%, 80% 105%, 90% 102%, 8% 96%,
           18% 103%, 28% 109%, 38% 97%, 48% 105%, 58% 100%,
-          68% 106%, 78% 98%, 88% 104%, 98% 101%, 12% 107%,
-          3% 99%, 13% 104%, 23% 101%, 33% 107%, 43% 99%,
-          53% 105%, 63% 98%, 73% 104%, 83% 100%, 93% 106%,
-          7% 102%, 17% 97%, 27% 105%, 37% 100%, 47% 103%,
-          57% 108%, 67% 95%, 77% 102%, 87% 106%, 97% 99%,
-          2% 104%, 11% 98%, 21% 108%, 31% 103%, 41% 96%,
-          51% 106%, 61% 101%, 71% 107%, 81% 97%, 91% 103%;
+          68% 106%, 78% 98%, 88% 104%, 98% 101%, 12% 107%;
         opacity: 0;
       }
 
       10% {
-        opacity: 0.6;
+        opacity: 0.7;
       }
 
       90% {
-        opacity: 0.4;
+        opacity: 0.5;
       }
 
       100% {
@@ -158,13 +119,7 @@
           10% -16%, 20% -24%, 30% -14%, 40% -20%, 50% -17%,
           60% -26%, 70% -15%, 80% -23%, 90% -18%, 8% -12%,
           18% -21%, 28% -28%, 38% -13%, 48% -22%, 58% -16%,
-          68% -24%, 78% -14%, 88% -20%, 98% -17%, 12% -25%,
-          3% -15%, 13% -20%, 23% -17%, 33% -26%, 43% -15%,
-          53% -22%, 63% -14%, 73% -20%, 83% -16%, 93% -24%,
-          7% -19%, 17% -13%, 27% -22%, 37% -16%, 47% -21%,
-          57% -27%, 67% -11%, 77% -19%, 87% -24%, 97% -15%,
-          2% -20%, 11% -14%, 21% -27%, 31% -21%, 41% -12%,
-          51% -24%, 61% -17%, 71% -26%, 81% -13%, 91% -21%;
+          68% -24%, 78% -14%, 88% -20%, 98% -17%, 12% -25%;
         opacity: 0;
       }
     }
@@ -323,10 +278,10 @@
       left: -320px;
     }
 
-    /* Panel Toggle Button - now part of panel */
+    /* Panel Toggle Button - Fixed Position */
     .panelToggle {
-      position: absolute;
-      right: -38px;
+      position: fixed;
+      left: 332px;
       top: 50%;
       transform: translateY(-50%);
       width: 36px;
@@ -339,11 +294,11 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: all 0.3s;
+      transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1), background 0.3s, box-shadow 0.3s;
       box-shadow:
         0 0 25px rgba(0, 245, 255, .30),
         0 0 0 1px rgba(0, 245, 255, .20) inset;
-      z-index: 1;
+      z-index: 11;
     }
 
     .panelToggle:hover {
@@ -1029,12 +984,14 @@
 <body>
   <!-- Cursor Light Effect -->
   <div id="cursorLight"></div>
+  <!-- Particles Effect Container -->
+  <div id="particlesContainer"></div>
 
   <!-- Project Header -->
   <div class="projectHeader">
     <div class="projectTitle">👻 PHANTOM SCANNER</div>
-    <div class="projectSub">Advanced Security Reconnaissance Platform</div>
-    <div class="students">
+    <div class="projectSubtitle">ADVANCED SECURITY RECONNAISSANCE PLATFORM</div>
+    <div class="studentInfo">
       <span class="studentBadge">&#x1F6E1;&#xFE0F; مصطفى تحسين علي</span>
       <span class="studentBadge">&#x1F6E1;&#xFE0F; هدى صالح عبادي</span>
       <span class="studentBadge">&#x1F6E1;&#xFE0F; احمد فؤاد الدلفي</span>
@@ -1043,11 +1000,6 @@
 
   <!-- Test Sites Panel -->
   <div class="testPanel" id="testPanel">
-    <!-- Toggle Button (part of panel) -->
-    <button class="panelToggle" id="panelToggleBtn" onclick="togglePanel()">
-      <span class="arrow" id="toggleArrow">◀</span>
-    </button>
-
     <div class="panelHeader">⚠️ LEGAL NOTICE</div>
     <div class="warningText">
       <div style="margin-bottom: 8px;">
@@ -1073,6 +1025,11 @@
       </a>
     </div>
   </div>
+
+  <!-- Toggle Button (separate from panel) -->
+  <button class="panelToggle" id="panelToggleBtn" onclick="togglePanel()">
+    <span class="arrow" id="toggleArrow">◀</span>
+  </button>
 
   <div class="frame">
     <div class="hud">
@@ -1211,13 +1168,16 @@
     // Panel Toggle
     function togglePanel() {
       const panel = document.getElementById('testPanel');
+      const toggleBtn = document.getElementById('panelToggleBtn');
       const arrow = document.getElementById('toggleArrow');
 
       panel.classList.toggle('hidden');
 
       if (panel.classList.contains('hidden')) {
+        toggleBtn.style.left = '0px';
         arrow.style.transform = 'rotate(180deg)';
       } else {
+        toggleBtn.style.left = '332px';
         arrow.style.transform = 'rotate(0deg)';
       }
     }
