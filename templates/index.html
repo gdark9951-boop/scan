@@ -204,7 +204,7 @@
     /* Panel Toggle Button */
     .panelToggle {
       position: fixed;
-      left: 310px;
+      left: 332px;
       top: 50%;
       transform: translateY(-50%);
       width: 36px;
@@ -449,37 +449,51 @@
       bottom: 0;
       left: 0;
       right: 0;
-      height: 200px;
+      height: 250px;
       background-image:
-        radial-gradient(2px 2px at 20% 80%, rgba(0, 245, 255, .4), transparent),
-        radial-gradient(2px 2px at 60% 90%, rgba(182, 107, 255, .3), transparent),
-        radial-gradient(1px 1px at 35% 85%, rgba(0, 245, 255, .5), transparent),
-        radial-gradient(2px 2px at 75% 95%, rgba(182, 107, 255, .4), transparent),
-        radial-gradient(1px 1px at 15% 92%, rgba(0, 245, 255, .3), transparent),
-        radial-gradient(2px 2px at 85% 88%, rgba(182, 107, 255, .5), transparent),
-        radial-gradient(1px 1px at 45% 95%, rgba(0, 245, 255, .4), transparent),
-        radial-gradient(2px 2px at 90% 82%, rgba(182, 107, 255, .3), transparent);
-      background-size: 100% 100%;
-      background-position: 0% 100%;
-      opacity: 0.6;
-      animation: particlesRise 3s ease-in-out infinite;
+        radial-gradient(circle, rgba(0, 245, 255, .8) 0%, rgba(0, 245, 255, .4) 40%, transparent 70%),
+        radial-gradient(circle, rgba(182, 107, 255, .7) 0%, rgba(182, 107, 255, .3) 40%, transparent 70%),
+        radial-gradient(circle, rgba(0, 245, 255, .9) 0%, rgba(0, 245, 255, .5) 40%, transparent 70%),
+        radial-gradient(circle, rgba(182, 107, 255, .8) 0%, rgba(182, 107, 255, .4) 40%, transparent 70%),
+        radial-gradient(circle, rgba(0, 245, 255, .7) 0%, rgba(0, 245, 255, .3) 40%, transparent 70%),
+        radial-gradient(circle, rgba(182, 107, 255, .9) 0%, rgba(182, 107, 255, .5) 40%, transparent 70%),
+        radial-gradient(circle, rgba(0, 245, 255, .8) 0%, rgba(0, 245, 255, .4) 40%, transparent 70%),
+        radial-gradient(circle, rgba(182, 107, 255, .7) 0%, rgba(182, 107, 255, .3) 40%, transparent 70%);
+      background-size:
+        15px 15px, 12px 12px, 18px 18px, 14px 14px,
+        16px 16px, 13px 13px, 17px 17px, 15px 15px;
+      background-position:
+        20% 100%, 60% 95%, 35% 90%, 75% 98%,
+        15% 92%, 85% 88%, 45% 96%, 90% 85%;
+      background-repeat: no-repeat;
+      opacity: 0.9;
+      animation: particlesRise 3.5s ease-in-out infinite;
       pointer-events: none;
-      mask-image: linear-gradient(to top, black 0%, transparent 100%);
-      -webkit-mask-image: linear-gradient(to top, black 0%, transparent 100%);
+      mask-image: linear-gradient(to top, black 30%, transparent 100%);
+      -webkit-mask-image: linear-gradient(to top, black 30%, transparent 100%);
+      filter: blur(1px);
     }
 
     @keyframes particlesRise {
       0% {
-        background-position: 0% 100%;
+        background-position:
+          20% 110%, 60% 105%, 35% 100%, 75% 108%,
+          15% 102%, 85% 98%, 45% 106%, 90% 95%;
         opacity: 0;
       }
 
-      20% {
-        opacity: 0.6;
+      15% {
+        opacity: 0.9;
+      }
+
+      85% {
+        opacity: 0.7;
       }
 
       100% {
-        background-position: 0% -100%;
+        background-position:
+          20% -40%, 60% -45%, 35% -50%, 75% -42%,
+          15% -48%, 85% -52%, 45% -44%, 90% -55%;
         opacity: 0;
       }
     }
@@ -1140,7 +1154,7 @@
         toggleBtn.style.left = '0px';
         arrow.style.transform = 'rotate(180deg)';
       } else {
-        toggleBtn.style.left = '310px';
+        toggleBtn.style.left = '332px';
         arrow.style.transform = 'rotate(0deg)';
       }
     }
