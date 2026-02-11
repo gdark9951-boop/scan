@@ -100,6 +100,250 @@
       opacity: 1;
     }
 
+    /* Project Header */
+    .projectHeader {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+      text-align: center;
+      animation: fadeInDown 0.8s ease;
+    }
+
+    @keyframes fadeInDown {
+      from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+    }
+
+    .projectTitle {
+      font-size: 32px;
+      font-weight: 900;
+      letter-spacing: 3px;
+      color: var(--cyan);
+      text-shadow:
+        0 0 20px rgba(0, 245, 255, .6),
+        0 0 40px rgba(0, 245, 255, .4),
+        0 0 60px rgba(0, 245, 255, .2);
+      margin-bottom: 8px;
+    }
+
+    .projectSub {
+      font-size: 13px;
+      color: rgba(0, 245, 255, .75);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    .students {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .studentBadge {
+      padding: 8px 18px;
+      background: linear-gradient(135deg, rgba(0, 245, 255, .15), rgba(182, 107, 255, .12));
+      border: 2px solid rgba(0, 245, 255, .50);
+      border-radius: 25px;
+      font-size: 14px;
+      color: #00f5ff;
+      font-weight: 900;
+      letter-spacing: .8px;
+      box-shadow:
+        0 0 25px rgba(0, 245, 255, .30),
+        0 0 0 1px rgba(0, 245, 255, .20) inset;
+      transition: all 0.3s;
+      text-shadow: 0 0 10px rgba(0, 245, 255, .5);
+    }
+
+    .studentBadge:hover {
+      background: linear-gradient(135deg, rgba(0, 245, 255, .25), rgba(182, 107, 255, .20));
+      border-color: rgba(0, 245, 255, .70);
+      box-shadow:
+        0 0 40px rgba(0, 245, 255, .45),
+        0 0 0 1px rgba(0, 245, 255, .30) inset;
+      transform: translateY(-3px) scale(1.05);
+    }
+
+    /* Test Sites Panel */
+    .testPanel {
+      position: fixed;
+      left: 30px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 280px;
+      background: rgba(6, 12, 18, .75);
+      border-radius: 16px;
+      padding: 20px;
+      z-index: 10;
+      border: 1px solid rgba(0, 245, 255, .25);
+      box-shadow:
+        0 0 0 1px rgba(0, 245, 255, .12) inset,
+        0 0 40px rgba(0, 245, 255, .18),
+        0 0 80px rgba(182, 107, 255, .12);
+      backdrop-filter: blur(10px);
+      animation: fadeInLeft 0.8s ease;
+    }
+
+    @keyframes fadeInLeft {
+      from {
+        opacity: 0;
+        transform: translateY(-50%) translateX(-30px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(-50%) translateX(0);
+      }
+    }
+
+    /* Glowing animated border */
+    .testPanel::before {
+      content: "";
+      position: absolute;
+      inset: -1px;
+      border-radius: 16px;
+      padding: 2px;
+      background: linear-gradient(45deg,
+          rgba(0, 245, 255, .0),
+          rgba(0, 245, 255, .6),
+          rgba(182, 107, 255, .6),
+          rgba(0, 245, 255, .0));
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      animation: borderGlow 3s linear infinite;
+      pointer-events: none;
+    }
+
+    @keyframes borderGlow {
+
+      0%,
+      100% {
+        opacity: 0.6;
+      }
+
+      50% {
+        opacity: 1;
+      }
+    }
+
+    .panelHeader {
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      color: var(--cyan);
+      margin-bottom: 12px;
+      text-transform: uppercase;
+    }
+
+    .warningText {
+      font-size: 12px;
+      line-height: 1.6;
+      color: rgba(255, 216, 77, .95);
+      background: rgba(255, 216, 77, .08);
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 216, 77, .25);
+      margin-bottom: 16px;
+    }
+
+    .panelDivider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(0, 245, 255, .30), transparent);
+      margin: 16px 0;
+    }
+
+    .testSites {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .testSite {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      background: rgba(0, 245, 255, .05);
+      border: 1px solid rgba(0, 245, 255, .20);
+      border-radius: 8px;
+      color: var(--text);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 600;
+      transition: all 0.3s;
+      cursor: pointer;
+    }
+
+    .testSite:hover {
+      background: rgba(0, 245, 255, .12);
+      border-color: rgba(0, 245, 255, .40);
+      box-shadow: 0 0 20px rgba(0, 245, 255, .20);
+      transform: translateX(5px);
+    }
+
+    .testSite .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 10px var(--green);
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.5;
+      }
+    }
+
+    @media (max-width: 1400px) {
+      .testPanel {
+        left: 15px;
+        width: 240px;
+        font-size: 12px;
+      }
+
+      .projectHeader {
+        top: 15px;
+      }
+
+      .projectTitle {
+        font-size: 24px;
+      }
+    }
+
+    @media (max-width: 980px) {
+      .testPanel {
+        display: none;
+      }
+
+      .projectHeader {
+        position: static;
+        transform: none;
+        margin: 20px;
+      }
+    }
+
     /* subtle scanline */
     body::before {
       content: "";
@@ -595,6 +839,40 @@
   <!-- Cursor Light Effect -->
   <div id="cursorLight"></div>
 
+  <!-- Project Header -->
+  <div class="projectHeader">
+    <div class="projectTitle">👻 PHANTOM SCANNER</div>
+    <div class="projectSub">Advanced Security Reconnaissance Platform</div>
+    <div class="students">
+      <span class="studentBadge">👤 مصطفى تحسين علي</span>
+      <span class="studentBadge">👤 هدى صالح عبادي</span>
+      <span class="studentBadge">👤 احمد فؤاد الدلفي</span>
+    </div>
+  </div>
+
+  <!-- Test Sites Panel -->
+  <div class="testPanel">
+    <div class="panelHeader">⚠️ LEGAL NOTICE</div>
+    <div class="warningText">
+      Use ONLY on authorized systems. Unauthorized scanning is illegal.
+    </div>
+
+    <div class="panelDivider"></div>
+
+    <div class="panelHeader">🎯 TEST TARGETS</div>
+    <div class="testSites">
+      <a href="javascript:void(0)" class="testSite" onclick="setTarget('https://example.com')">
+        <span class="dot"></span>example.com
+      </a>
+      <a href="javascript:void(0)" class="testSite" onclick="setTarget('http://scanme.nmap.org')">
+        <span class="dot"></span>scanme.nmap.org
+      </a>
+      <a href="javascript:void(0)" class="testSite" onclick="setTarget('https://httpbin.org')">
+        <span class="dot"></span>httpbin.org
+      </a>
+    </div>
+  </div>
+
   <div class="frame">
     <div class="hud">
       <div class="inner">
@@ -618,11 +896,11 @@
             </div>
           </button>
 
-          <button class="neo a-green" data-action="audit" disabled>
-            <span class="icon">🧠</span>
+          <button class="neo a-red" data-action="leaks" disabled>
+            <span class="icon">🔓</span>
             <div>
-              <div class="title">AUDIT COMMANDS</div>
-              <div class="sub">Templates & intel</div>
+              <div class="title">DATA LEAKS</div>
+              <div class="sub">Breach detector</div>
             </div>
           </button>
 
@@ -721,6 +999,13 @@
     }
 
     animateCursorLight();
+
+    // Test Site Target Setter
+    function setTarget(url) {
+      document.getElementById('target').value = url;
+      // Scroll to scanner
+      document.querySelector('.hud').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
 
     // Main Scanner Logic
     const $ = (s) => document.querySelector(s);
@@ -823,26 +1108,7 @@
           currentResult.msf_report.split('\n').forEach(line => addLine(line, ""));
           break;
 
-        case 'audit':
-          addLine("=== AUDIT COMMANDS ===", "ok");
-          currentResult.audit_cmds.forEach(cmd => addLine(cmd, "hint"));
-          break;
-
-        case 'diff':
-          addLine("=== CONTENT DIFF ===", "ok");
-          currentResult.diff_data.forEach(line => addLine(line, ""));
-          break;
-
-        case 'nmap':
-          addLine("=== NMAP PORT SCAN ===", "ok");
-          if (currentResult.ports.length > 0) {
-            currentResult.ports.forEach(port => addLine(port, ""));
-          } else {
-            addLine("No open ports detected", "low");
-          }
-
-          // NEW: Display Data Leaks
-          addLine("", "");
+        case 'leaks':
           addLine("=== DATA BREACH DETECTION ===", "crit");
           const leaks = currentResult.data_leaks;
 
@@ -873,6 +1139,20 @@
           if (leaks.exposed_files.length === 0 && leaks.leaked_emails.length === 0 &&
             leaks.api_keys_found.length === 0 && leaks.sensitive_patterns.length === 0) {
             addLine("✅ No critical data leaks detected", "ok");
+          }
+          break;
+
+        case 'diff':
+          addLine("=== CONTENT DIFF ===", "ok");
+          currentResult.diff_data.forEach(line => addLine(line, ""));
+          break;
+
+        case 'nmap':
+          addLine("=== NMAP PORT SCAN ===", "ok");
+          if (currentResult.ports.length > 0) {
+            currentResult.ports.forEach(port => addLine(port, ""));
+          } else {
+            addLine("No open ports detected", "low");
           }
           break;
 
