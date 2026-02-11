@@ -278,10 +278,10 @@
       left: -320px;
     }
 
-    /* Panel Toggle Button - Fixed Position */
+    /* Panel Toggle Button - now part of panel */
     .panelToggle {
-      position: fixed;
-      left: 332px;
+      position: absolute;
+      right: -38px;
       top: 50%;
       transform: translateY(-50%);
       width: 36px;
@@ -294,11 +294,11 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1), background 0.3s, box-shadow 0.3s;
+      transition: all 0.3s;
       box-shadow:
         0 0 25px rgba(0, 245, 255, .30),
         0 0 0 1px rgba(0, 245, 255, .20) inset;
-      z-index: 11;
+      z-index: 1;
     }
 
     .panelToggle:hover {
