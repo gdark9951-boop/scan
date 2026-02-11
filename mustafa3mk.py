@@ -40,43 +40,30 @@ import random
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 DB_FILE = "fingerprints_db.json"
-TIMEOUT = 10
-ROUNDS = 5
+TIMEOUT = 5  # Reduced from 10 to 5 seconds
+ROUNDS = 2   # Reduced from 5 to 2 rounds
 
-# --- Dedicated Nmap-style Port List (Top 100 Critical) ---
+# --- Top 20 Critical Ports (Optimized for Speed) ---
 NMAP_PORTS = {
-    21: 'FTP', 22: 'SSH', 23: 'Telnet', 25: 'SMTP', 53: 'DNS', 67: 'DHCP', 68: 'DHCP', 
-    69: 'TFTP', 80: 'HTTP', 88: 'Kerberos', 110: 'POP3', 111: 'RPC', 123: 'NTP', 
-    135: 'RPC-Endpoint', 137: 'NetBIOS-NS', 138: 'NetBIOS-DGM', 139: 'NetBIOS-SSN',
-    143: 'IMAP', 161: 'SNMP', 179: 'BGP', 389: 'LDAP', 443: 'HTTPS', 445: 'SMB', 
-    465: 'SMTPS', 500: 'ISAKMP', 514: 'Syslog', 515: 'LPD', 520: 'RIP', 548: 'AFP', 
-    554: 'RTSP', 587: 'SMTP-Submission', 631: 'IPP', 636: 'LDAPS', 873: 'Rsync', 
-    993: 'IMAPS', 995: 'POP3S', 1025: 'NFS/RPC', 1080: 'SOCKS', 1433: 'MS-SQL', 
-    1434: 'MS-SQL-M', 1521: 'Oracle', 1723: 'PPTP', 1812: 'RADIUS', 2049: 'NFS', 
-    2121: 'FTP-Alt', 2375: 'Docker', 2376: 'Docker-S', 3306: 'MySQL', 3389: 'RDP', 
-    4444: 'Metasploit', 4848: 'GlassFish', 5000: 'UPnP/Flask', 5432: 'PostgreSQL', 
-    5632: 'PCAnywhere', 5900: 'VNC', 5984: 'CouchDB', 6000: 'X11', 6379: 'Redis', 
-    6667: 'IRC', 8000: 'HTTP-Alt', 8080: 'HTTP-Proxy', 8081: 'HTTP-Alt', 
-    8443: 'HTTPS-Proxy', 8888: 'HTTP-Alt', 9000: 'SonarQube', 9200: 'ElasticSearch', 
-    11211: 'Memcached', 27017: 'MongoDB'
+    21: 'FTP', 22: 'SSH', 23: 'Telnet', 25: 'SMTP', 53: 'DNS',
+    80: 'HTTP', 110: 'POP3', 143: 'IMAP', 443: 'HTTPS', 445: 'SMB',
+    3306: 'MySQL', 3389: 'RDP', 5432: 'PostgreSQL', 6379: 'Redis',
+    8000: 'HTTP-Alt', 8080: 'HTTP-Proxy', 8443: 'HTTPS-Alt', 
+    9200: 'ElasticSearch', 27017: 'MongoDB', 5900: 'VNC'
 }
 
-# --- Path Fuzzing List (High Risk Files) ---
+# --- Top 15 High-Risk Paths (Optimized) ---
 SENSITIVE_PATHS = [
-    ".env", ".git/config", ".git/index", ".vscode/settings.json",
-    "wp-config.php", "config.php", "configuration.php", "web.config",
-    "backup.sql", "database.sql", "db.sql", "dump.sql",
-    "phpinfo.php", "info.php", "test.php",
-    "admin/", "administrator/", "login.php", "wp-login.php",
-    "server-status", ".htaccess", ".bash_history", "id_rsa",
-    "composer.json", "package.json", "Dockerfile", "xmlrpc.php"
+    ".env", ".git/config", "wp-config.php", "config.php", 
+    "phpinfo.php", "admin/", "login.php", "wp-login.php",
+    "backup.sql", "database.sql", ".htaccess", 
+    "composer.json", "package.json", "xmlrpc.php", "id_rsa"
 ]
 
-# --- Subdomain Wordlist (Top 25) ---
+# --- Top 10 Subdomains (Optimized) ---
 SUBDOMAIN_LIST = [
-    "www", "dev", "staging", "api", "admin", "test", "webmail", "mail",
-    "portal", "vpn", "ssh", "git", "remote", "support", "beta", "old",
-    "demo", "shop", "blog", "cdn", "secure", "private", "corp", "internal", "app"
+    "www", "dev", "api", "admin", "test", "mail",
+    "staging", "portal", "vpn", "blog"
 ]
 
 HEADERS = {
