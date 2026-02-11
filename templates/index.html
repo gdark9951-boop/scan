@@ -102,10 +102,9 @@
 
     /* Project Header */
     .projectHeader {
-      position: fixed;
-      top: 20px;
-      left: 50%;
-      transform: translateX(-50%);
+      position: relative;
+      padding-top: 30px;
+      padding-bottom: 20px;
       z-index: 10;
       text-align: center;
       animation: fadeInDown 0.8s ease;
@@ -114,17 +113,17 @@
     @keyframes fadeInDown {
       from {
         opacity: 0;
-        transform: translateX(-50%) translateY(-20px);
+        transform: translateY(-20px);
       }
 
       to {
         opacity: 1;
-        transform: translateX(-50%) translateY(0);
+        transform: translateY(0);
       }
     }
 
     .projectTitle {
-      font-size: 32px;
+      font-size: 38px;
       font-weight: 900;
       letter-spacing: 3px;
       color: var(--cyan);
@@ -136,17 +135,17 @@
     }
 
     .projectSub {
-      font-size: 13px;
+      font-size: 14px;
       color: rgba(0, 245, 255, .75);
       letter-spacing: 2px;
       text-transform: uppercase;
       font-weight: 600;
-      margin-bottom: 12px;
+      margin-bottom: 16px;
     }
 
     .students {
       display: flex;
-      gap: 10px;
+      gap: 12px;
       justify-content: center;
       flex-wrap: wrap;
     }
@@ -323,12 +322,8 @@
         font-size: 12px;
       }
 
-      .projectHeader {
-        top: 15px;
-      }
-
       .projectTitle {
-        font-size: 24px;
+        font-size: 28px;
       }
     }
 
@@ -338,9 +333,11 @@
       }
 
       .projectHeader {
-        position: static;
-        transform: none;
-        margin: 20px;
+        padding-top: 20px;
+      }
+
+      .projectTitle {
+        font-size: 24px;
       }
     }
 
@@ -373,11 +370,12 @@
     }
 
     .frame {
-      height: 100%;
+      min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
       padding: 28px;
+      padding-bottom: 80px;
     }
 
     .hud {
@@ -844,9 +842,9 @@
     <div class="projectTitle">👻 PHANTOM SCANNER</div>
     <div class="projectSub">Advanced Security Reconnaissance Platform</div>
     <div class="students">
-      <span class="studentBadge">👤 مصطفى تحسين علي</span>
-      <span class="studentBadge">👤 هدى صالح عبادي</span>
-      <span class="studentBadge">👤 احمد فؤاد الدلفي</span>
+      <span class="studentBadge">�️ مصطفى تحسين علي</span>
+      <span class="studentBadge">�️ هدى صالح عبادي</span>
+      <span class="studentBadge">�️ احمد فؤاد الدلفي</span>
     </div>
   </div>
 
@@ -854,7 +852,12 @@
   <div class="testPanel">
     <div class="panelHeader">⚠️ LEGAL NOTICE</div>
     <div class="warningText">
-      Use ONLY on authorized systems. Unauthorized scanning is illegal.
+      <div style="margin-bottom: 8px;">
+        <strong>العربية:</strong> استخدم فقط على الأنظمة المصرح لك بها. الفحص غير المصرح به غير قانوني.
+      </div>
+      <div>
+        <strong>English:</strong> Use ONLY on authorized systems. Unauthorized scanning is illegal.
+      </div>
     </div>
 
     <div class="panelDivider"></div>
