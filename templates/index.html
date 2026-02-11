@@ -37,9 +37,11 @@
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
       color: var(--text);
       background:
-        radial-gradient(1200px 600px at 60% 30%, rgba(0, 245, 255, .12), transparent 55%),
-        radial-gradient(900px 550px at 20% 70%, rgba(182, 107, 255, .10), transparent 60%),
+        radial-gradient(1600px 800px at 60% 30%, rgba(0, 245, 255, .12), transparent 55%),
+        radial-gradient(1200px 750px at 20% 70%, rgba(182, 107, 255, .10), transparent 60%),
         linear-gradient(180deg, var(--bg0), var(--bg1));
+      background-attachment: fixed;
+      background-size: 100% 100%;
       overflow-y: auto;
       /* Enable vertical scrolling */
       overflow-x: hidden;
@@ -192,17 +194,17 @@
         0 0 40px rgba(0, 245, 255, .18),
         0 0 80px rgba(182, 107, 255, .12);
       backdrop-filter: blur(10px);
-      transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .testPanel.hidden {
-      transform: translateY(-50%) translateX(-320px);
+      left: -320px;
     }
 
     /* Panel Toggle Button */
     .panelToggle {
-      position: absolute;
-      right: -40px;
+      position: fixed;
+      left: 310px;
       top: 50%;
       transform: translateY(-50%);
       width: 36px;
@@ -215,10 +217,11 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: all 0.3s;
+      transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1), background 0.3s, box-shadow 0.3s;
       box-shadow:
         0 0 25px rgba(0, 245, 255, .30),
         0 0 0 1px rgba(0, 245, 255, .20) inset;
+      z-index: 11;
     }
 
     .panelToggle:hover {
@@ -235,8 +238,10 @@
       transition: transform 0.3s;
     }
 
-    .testPanel.hidden .panelToggle .arrow {
-      transform: rotate(180deg);
+    .testPanel.hidden~.panelToggle,
+    .testPanel.hidden+* .panelToggle,
+    #testPanel.hidden+#panelToggleBtn {
+      left: -10px;
     }
 
     @keyframes fadeInLeft {
@@ -431,8 +436,30 @@
       box-shadow:
         0 0 0 1px rgba(0, 245, 255, .10) inset,
         0 0 70px rgba(0, 245, 255, .10),
-        0 0 120px rgba(182, 107, 255, .06);
+        0 0 120px rgba(182, 107, 255, .06),
+        0 40px 100px -20px rgba(0, 0, 0, .5);
       overflow: hidden;
+      animation: hudPulse 4s ease-in-out infinite;
+    }
+
+    @keyframes hudPulse {
+
+      0%,
+      100% {
+        box-shadow:
+          0 0 0 1px rgba(0, 245, 255, .10) inset,
+          0 0 70px rgba(0, 245, 255, .10),
+          0 0 120px rgba(182, 107, 255, .06),
+          0 40px 100px -20px rgba(0, 0, 0, .5);
+      }
+
+      50% {
+        box-shadow:
+          0 0 0 1px rgba(0, 245, 255, .15) inset,
+          0 0 90px rgba(0, 245, 255, .15),
+          0 0 140px rgba(182, 107, 255, .10),
+          0 50px 120px -15px rgba(0, 0, 0, .7);
+      }
     }
 
     /* glowing border corners */
@@ -894,11 +921,6 @@
 
   <!-- Test Sites Panel -->
   <div class="testPanel" id="testPanel">
-    <!-- Toggle Button -->
-    <button class="panelToggle" id="panelToggle" onclick="togglePanel()">
-      <span class="arrow">◀</span>
-    </button>
-
     <div class="panelHeader">⚠️ LEGAL NOTICE</div>
     <div class="warningText">
       <div style="margin-bottom: 8px;">
@@ -924,6 +946,11 @@
       </a>
     </div>
   </div>
+
+  <!-- Toggle Button (separate from panel) -->
+  <button class="panelToggle" id="panelToggleBtn" onclick="togglePanel()">
+    <span class="arrow" id="toggleArrow">◀</span>
+  </button>
 
   <div class="frame">
     <div class="hud">
@@ -1062,7 +1089,18 @@
     // Panel Toggle
     function togglePanel() {
       const panel = document.getElementById('testPanel');
+      const toggleBtn = document.getElementById('panelToggleBtn');
+      const arrow = document.getElementById('toggleArrow');
+
       panel.classList.toggle('hidden');
+
+      if (panel.classList.contains('hidden')) {
+        toggleBtn.style.left = '-10px';
+        arrow.style.transform = 'rotate(180deg)';
+      } else {
+        toggleBtn.style.left = '310px';
+        arrow.style.transform = 'rotate(0deg)';
+      }
     }
 
     // Main Scanner Logic
