@@ -1,23 +1,14 @@
 # Advanced Website Fingerprint & Lightweight IDS (Flask Web UI)
+#!/usr/bin/env python3
+# Advanced Website Fingerprint & Lightweight IDS (Flask Web UI)
 # UI: Modern Cyber HUD Design
 # Identity: Mustafa v2 (Enhanced)
 
 import sys
 import subprocess
 
-def install_dependencies():
-    """Self-healing: Automatically install missing libraries"""
-    required = ["requests", "urllib3", "flask", "flask-cors"]
-    for lib in required:
-        try:
-            __import__(lib)
-        except ImportError:
-            print(f"[!] Library '{lib}' missing. Installing now...")
-            subprocess.check_call([sys.executable, "-m", "pip", "install", lib])
-            print(f"[+] '{lib}' installed successfully.")
-
-# Execute check before imports
-install_dependencies()
+# Libraries are assumed to be installed for performance
+# install_dependencies()
 
 import requests
 from requests.adapters import HTTPAdapter
@@ -129,7 +120,7 @@ def probe_ports(domain):
     """Deep Port Scan (Nmap-Style)"""
     try:
         ip = socket.gethostbyname(domain)
-    except:
+    except Exception:
         return [f"DNS resolution failed for {domain}"]
     
     results = []
@@ -165,7 +156,7 @@ def path_recon(base_url):
             r = session.get(url, timeout=TIMEOUT, allow_redirects=False, verify=False)
             if r.status_code in [200, 301, 302, 403]:
                 return f"{path} [EXIST] ({r.status_code})"
-        except:
+        except Exception:
             pass
         return None
     
@@ -184,7 +175,7 @@ def subdomain_recon(domain):
         try:
             ip = socket.gethostbyname(full)
             return f"{full} -> {ip}"
-        except:
+        except Exception:
             return None
     
     with ThreadPoolExecutor(max_workers=20) as executor:
@@ -203,7 +194,7 @@ def probe_robots(url):
             return {"status": "Found", "content": summary}
         else:
             return {"status": "Not Found (404)", "content": ""}
-    except:
+    except Exception:
         return {"status": "Unreachable", "content": ""}
 
 def extract_links(html):
@@ -237,7 +228,7 @@ def detect_data_leaks(base_url, html_content=""):
             if r.status_code in [200, 403]:  # 200 = accessible, 403 = exists but forbidden
                 status = "CRITICAL - Accessible" if r.status_code == 200 else "WARNING - Exists (Forbidden)"
                 leaks["exposed_files"].append(f"{path} [{status}]")
-        except:
+        except Exception:
             pass
     
     # 2. Extract emails from page content
@@ -272,7 +263,7 @@ def detect_data_leaks(base_url, html_content=""):
             # Check for sensitive paths in robots.txt
             if 'admin' in r.text.lower() or 'backup' in r.text.lower():
                 leaks["sensitive_patterns"].append("Admin/Backup paths found in robots.txt")
-    except:
+    except Exception:
         pass
     
     # 5. Check for directory listing
@@ -280,7 +271,7 @@ def detect_data_leaks(base_url, html_content=""):
         r = session.get(base_url, timeout=3)
         if 'Index of /' in r.text or 'Directory Listing' in r.text:
             leaks["sensitive_patterns"].append("CRITICAL: Directory Listing Enabled")
-    except:
+    except Exception:
         pass
     
     return leaks
@@ -296,13 +287,12 @@ def probe_http_and_meta(url, rounds=ROUNDS):
     for _ in range(rounds):
         start = time.time()
         try:
-            r = session.get(url, timeout=TIMEOUT)
+            r = session.get(url, timeout=TIMEOUT, verify=False)
             end = time.time()
             timings.append(end - start)
             status_codes.append(r.status_code)
             last_headers = dict(r.headers)
             last_content = r.text
-            last_content_store = r.text
             headers_snaps.append("".join(f"{k}:{v}" for k, v in sorted(r.headers.items())))
         except Exception:
             pass 
@@ -334,7 +324,7 @@ def probe_http_and_meta(url, rounds=ROUNDS):
         "jitter": jitter,
         "status_codes": status_codes,
         "headers": last_headers,
-        "last_content": last_content_store if 'last_content_store' in locals() else "",
+        "last_content": last_content,
         "metadata": {"title": title, "description": desc, "emails": emails},
         "links": links
     }
@@ -343,7 +333,7 @@ def probe_dns(domain):
     try:
         ip = socket.gethostbyname(domain)
         return {"ip": ip}
-    except:
+    except Exception:
         return {"ip": "Unknown"}
 
 def probe_ssl(domain):
@@ -450,9 +440,10 @@ def exploit_research(vulns):
 def generate_scanner_commands(scan_data):
     """Generate scanner commands based on scan results"""
     cmds = []
-    domain = scan_data['url'].replace('https://', '').replace('http://', '').split('/')[0]
+    url = scan_data['url']
+    domain = url.replace('https://', '').replace('http://', '').split('/')[0]
     cmds.append(f"nmap -sV -p- {domain}")
-    cmds.append(f"nikto -h {scan_data['url']}")
+    cmds.append(f"nikto -h {url}")
     return cmds
 
 def metasploit_console_report(scan_data):
@@ -490,7 +481,7 @@ def analyze(url):
     if not http_res: raise Exception("Target Unreachable (Blocked or Offline)")
     
     # Detect data leaks using HTTP content
-    html_content = http_res.get('html_snippet', '')
+    html_content = http_res.get('last_content', '')
     data_leaks = detect_data_leaks(url, html_content)
     
     results = {
@@ -553,5 +544,5 @@ if __name__ == '__main__':
     print("\n[*] Open your browser and navigate to:")
     print("[*] http://127.0.0.1:5000")
     print("\n[*] Press CTRL+C to stop the server\n")
-    
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(debug=False, host='0.0.0.0', port=port)

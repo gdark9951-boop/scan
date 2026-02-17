@@ -47,81 +47,9 @@
       position: relative;
     }
 
-    /* Particles Container - Dedicated Element */
+    /* Remove particlesContainer (colored dots) */
     #particlesContainer {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 9999;
-      background:
-        radial-gradient(circle 5px at 5% 95%, rgba(0, 245, 255, 1), transparent),
-        radial-gradient(circle 6px at 15% 98%, rgba(182, 107, 255, 1), transparent),
-        radial-gradient(circle 5px at 25% 92%, rgba(0, 245, 255, 1), transparent),
-        radial-gradient(circle 7px at 35% 96%, rgba(182, 107, 255, 1), transparent),
-        radial-gradient(circle 5px at 45% 94%, rgba(0, 245, 255, 1), transparent),
-        radial-gradient(circle 6px at 55% 97%, rgba(182, 107, 255, 1), transparent),
-        radial-gradient(circle 5px at 65% 93%, rgba(0, 245, 255, 1), transparent),
-        radial-gradient(circle 7px at 75% 99%, rgba(182, 107, 255, 1), transparent),
-        radial-gradient(circle 6px at 85% 91%, rgba(0, 245, 255, 1), transparent),
-        radial-gradient(circle 5px at 95% 95%, rgba(182, 107, 255, 1), transparent),
-        radial-gradient(circle 6px at 10% 90%, rgba(0, 245, 255, 1), transparent),
-        radial-gradient(circle 5px at 20% 96%, rgba(182, 107, 255, 1), transparent),
-        radial-gradient(circle 7px at 30% 88%, rgba(0, 245, 255, 1), transparent),
-        radial-gradient(circle 5px at 40% 94%, rgba(182, 107, 255, 1), transparent),
-        radial-gradient(circle 6px at 50% 91%, rgba(0, 245, 255, 1), transparent),
-        radial-gradient(circle 5px at 60% 97%, rgba(182, 107, 255, 1), transparent),
-        radial-gradient(circle 7px at 70% 89%, rgba(0, 245, 255, 1), transparent),
-        radial-gradient(circle 6px at 80% 95%, rgba(182, 107, 255, 1), transparent),
-        radial-gradient(circle 5px at 90% 92%, rgba(0, 245, 255, 1), transparent),
-        radial-gradient(circle 6px at 8% 86%, rgba(182, 107, 255, 1), transparent),
-        radial-gradient(circle 5px at 18% 93%, rgba(0, 245, 255, 1), transparent),
-        radial-gradient(circle 7px at 28% 99%, rgba(182, 107, 255, 1), transparent),
-        radial-gradient(circle 5px at 38% 87%, rgba(0, 245, 255, 1), transparent),
-        radial-gradient(circle 6px at 48% 95%, rgba(182, 107, 255, 1), transparent),
-        radial-gradient(circle 5px at 58% 90%, rgba(0, 245, 255, 1), transparent),
-        radial-gradient(circle 7px at 68% 96%, rgba(182, 107, 255, 1), transparent),
-        radial-gradient(circle 6px at 78% 88%, rgba(0, 245, 255, 1), transparent),
-        radial-gradient(circle 5px at 88% 94%, rgba(182, 107, 255, 1), transparent),
-        radial-gradient(circle 6px at 98% 91%, rgba(0, 245, 255, 1), transparent),
-        radial-gradient(circle 5px at 12% 97%, rgba(182, 107, 255, 1), transparent);
-      background-repeat: no-repeat;
-      opacity: 0.7;
-      animation: particlesRiseFull 10s ease-in-out infinite;
-    }
-
-    @keyframes particlesRiseFull {
-      0% {
-        background-position:
-          5% 105%, 15% 108%, 25% 102%, 35% 106%, 45% 104%,
-          55% 107%, 65% 103%, 75% 109%, 85% 101%, 95% 105%,
-          10% 100%, 20% 106%, 30% 98%, 40% 104%, 50% 101%,
-          60% 107%, 70% 99%, 80% 105%, 90% 102%, 8% 96%,
-          18% 103%, 28% 109%, 38% 97%, 48% 105%, 58% 100%,
-          68% 106%, 78% 98%, 88% 104%, 98% 101%, 12% 107%;
-        opacity: 0;
-      }
-
-      10% {
-        opacity: 0.7;
-      }
-
-      90% {
-        opacity: 0.5;
-      }
-
-      100% {
-        background-position:
-          5% -20%, 15% -25%, 25% -18%, 35% -22%, 45% -20%,
-          55% -27%, 65% -19%, 75% -29%, 85% -17%, 95% -21%,
-          10% -16%, 20% -24%, 30% -14%, 40% -20%, 50% -17%,
-          60% -26%, 70% -15%, 80% -23%, 90% -18%, 8% -12%,
-          18% -21%, 28% -28%, 38% -13%, 48% -22%, 58% -16%,
-          68% -24%, 78% -14%, 88% -20%, 98% -17%, 12% -25%;
-        opacity: 0;
-      }
+      display: none !important;
     }
 
     /* Custom Scrollbar Styling */
@@ -187,6 +115,7 @@
       z-index: 10;
       text-align: center;
       animation: fadeInDown 0.8s ease;
+      padding-left: 40px;
     }
 
     @keyframes fadeInDown {
@@ -243,6 +172,8 @@
         0 0 0 1px rgba(0, 245, 255, .20) inset;
       transition: all 0.3s;
       text-shadow: 0 0 10px rgba(0, 245, 255, .5);
+      white-space: nowrap;
+      margin-bottom: 4px;
     }
 
     .studentBadge:hover {
@@ -383,6 +314,26 @@
       border-radius: 8px;
       border: 1px solid rgba(255, 216, 77, .25);
       margin-bottom: 16px;
+    }
+
+    .warningToggle .arrow {
+      font-size: 16px;
+      color: var(--yellow);
+      transition: transform 0.3s;
+    }
+
+    .warningText {
+      transition: max-height 0.4s, opacity 0.4s;
+      overflow: hidden;
+      max-height: 200px;
+      opacity: 1;
+    }
+
+    .warningText.hidden {
+      max-height: 0;
+      opacity: 0;
+      padding: 0;
+      border: none;
     }
 
     .panelDivider {
@@ -991,22 +942,31 @@
   <div class="projectHeader">
     <div class="projectTitle">👻 PHANTOM SCANNER</div>
     <div class="projectSubtitle">ADVANCED SECURITY RECONNAISSANCE PLATFORM</div>
-    <div class="studentInfo">
+    <div class="students">
       <span class="studentBadge">&#x1F6E1;&#xFE0F; مصطفى تحسين علي</span>
       <span class="studentBadge">&#x1F6E1;&#xFE0F; هدى صالح عبادي</span>
       <span class="studentBadge">&#x1F6E1;&#xFE0F; احمد فؤاد الدلفي</span>
+      <span class="studentBadge">&#x1F6E1;&#xFE0F; حوراء هاشم طاهر</span>
     </div>
   </div>
 
   <!-- Test Sites Panel -->
   <div class="testPanel" id="testPanel">
-    <div class="panelHeader">⚠️ LEGAL NOTICE</div>
-    <div class="warningText">
+    <div class="panelHeader">⚠️ LEGAL NOTICE
+      <button class="warningToggle" id="warningToggleBtn" onclick="toggleWarningPanel()" style="background:none;border:none;cursor:pointer;margin-left:8px;vertical-align:middle;">
+        <span class="arrow" id="warningArrow">▼</span>
+      </button>
+    </div>
+    <div class="warningText" id="warningBox">
       <div style="margin-bottom: 8px;">
         <strong>العربية:</strong> استخدم فقط على الأنظمة المصرح لك بها. الفحص غير المصرح به غير قانوني.
       </div>
       <div>
         <strong>English:</strong> Use ONLY on authorized systems. Unauthorized scanning is illegal.
+      </div>
+      <div id="emailsBox">
+        <strong>البريد الإلكتروني:</strong>
+        <ul id="emailsList" style="margin: 8px 0 0 0; padding: 0; list-style: none;"></ul>
       </div>
     </div>
 
@@ -1027,7 +987,7 @@
   </div>
 
   <!-- Toggle Button (separate from panel) -->
-  <button class="panelToggle" id="panelToggleBtn" onclick="togglePanel()">
+  <button class="panelToggle" id="panelToggleBtn" onclick="toggleWarningPanel()" style="display:none;">
     <span class="arrow" id="toggleArrow">◀</span>
   </button>
 
@@ -1181,6 +1141,35 @@
         arrow.style.transform = 'rotate(0deg)';
       }
     }
+
+    // Warning Toggle
+    function toggleWarningPanel() {
+      const panel = document.getElementById('testPanel');
+      const warningArrow = document.getElementById('warningArrow');
+      const toggleBtn = document.getElementById('panelToggleBtn');
+      panel.classList.toggle('hidden');
+      if (panel.classList.contains('hidden')) {
+        warningArrow.textContent = '▲';
+        toggleBtn.style.display = 'block';
+      } else {
+        warningArrow.textContent = '▼';
+        toggleBtn.style.display = 'none';
+      }
+    }
+
+    // Example: Fill emails dynamically (replace with your actual emails array)
+    const emails = [
+      'hawraa.hashem@example.com',
+      'mustafa.tahseen@example.com',
+      'ahmed.fouad@example.com',
+      'huda.salih@example.com'
+    ];
+    const emailsList = document.getElementById('emailsList');
+    emails.forEach(email => {
+      const li = document.createElement('li');
+      li.textContent = email;
+      emailsList.appendChild(li);
+    });
 
     // Main Scanner Logic
     const $ = (s) => document.querySelector(s);
